@@ -1,5 +1,6 @@
 import sqlite3
 import tkinter as tk
+from datetime import datetime
 
 def conectar_bd():
     return sqlite3.connect('produtos.db')
@@ -41,6 +42,15 @@ def busca_produto():
 
 def inserir_produto(produto, valor):
     executar("INSERT INTO produtos (produto, valor) VALUES (?, ?)", (produto, valor))
+
+def registrar_venda(produto, quantidade, valortotal):
+    try:
+        data = datetime.now().strftime("%d/%m/%Y %H:%M")
+        executar(("INSERT INTO VENDAS (PRODUTO, QUANTIDADE, VALOR, DATA) VALUES (?, ?, ?, ?)"), (produto, quantidade, valortotal, data))
+    except:
+        pass
+    finally:
+        return "Done"
 
 def executar(comando, valores):
     try:
