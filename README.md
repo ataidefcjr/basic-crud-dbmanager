@@ -1,4 +1,4 @@
-# Clone o repositóri
+# Clone o repositório
 $ git clone https://github.com/ataidefcjr/basic-crud-dbmanager
   
 # Navegue ate o diretório
