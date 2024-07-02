@@ -1,69 +1,63 @@
 import tkinter as tk
-from tkinter import ttk
-from crud import listar_produtos, registrar_venda, excluir_venda
+from tkinter import ttk, messagebox
+from crud import listar_produtos, busca_preco, busca_produto
+from editar_produto import abrir_janela
 
+def atualizar_valores(event=None):
+    produto_selecionado = produto.get()
+    if produto_selecionado:
+        preco = float(busca_preco(produto_selecionado))
+        unidades = int(qtd.get())
+        if preco is not None:
+            valor_unit.config(state="normal")
+            valor_unit.delete(0, tk.END)
+            valor_unit.insert(0, f"R${preco:.2f}")
+            valor_unit.config(state="readonly")
+            valor_total.config(state="normal")
+            valor_total.delete(0, tk.END)
+            total = preco * unidades
+            valor_total.insert(0, f"R${total:.2f}")
+            valor_total.config(state="readonly")
+        else:
+            messagebox.showwarning("Não encontrado", "Ocorreu um erro ao procurar o produto.")
 
 janela = tk.Tk()
-janela.title("Editar Produtos")
-janela.geometry('600x400')
+janela.title("Vendas")
+janela.geometry('350x200')
 
-janela.columnconfigure(0, weight=1)
+janela.columnconfigure(0, weight=0)
 janela.columnconfigure(1, weight=1)
-janela.columnconfigure(2, weight=1)
+janela.columnconfigure(2, weight=0)
 janela.rowconfigure(4, weight=1)
 
-#Inputs
-tk.Label(janela, text="ID").grid(column=0, row=0, sticky="e")
-id = tk.Entry(janela)
-id.grid(column=1,row=0, sticky="ew")
-tk.Label(janela, text="Produto").grid(column=0, row=1, sticky="e")
-produto = tk.Entry(janela)
-produto.grid(column=1, row=1, sticky="ew")
-tk.Label(janela, text="Valor").grid(column=0, row=2, sticky="e")
-valor = tk.Entry(janela)
-valor.grid(column=1, row=2, sticky="ew")
+#Menu de produtos
+tk.Label(janela, text="Produto").grid(column=0, row=0, sticky="e", padx=20)
+produtos = busca_produto()
+produto = ttk.Combobox(janela, values=produtos)
+produto.grid(column=1, row=0, sticky='ew')
+#Entrada de quantidade
+tk.Label(janela, text="Quantidade").grid(column=0, row=1, sticky="e", padx=20)
+qtd = tk.Entry(janela)
+qtd.grid(column=1, row=1, sticky="ew")
+#Exibe o valor
+tk.Label(janela, text="Valor Unitário").grid(column=0, row=2, sticky="e", padx=20)
+valor_unit = tk.Entry(janela, state="readonly")
+valor_unit.grid(column=1, row=2, sticky="ew")
+tk.Label(janela, text="Valor Total").grid(column=0, row=3, sticky="e", padx=20)
+valor_total = tk.Entry(janela, state="readonly")
+valor_total.grid(column=1, row=3, sticky="ew")
+
 #Botões
-tk.Button(janela, text="Inserir", command = lambda: inserir()).grid (pady= 20, column=0, row=3, sticky="ew")
-tk.Button(janela, text="Atualizar", command = lambda: atualizar()).grid(column=1, row=3, sticky="ew")
-tk.Button(janela, text="Excluir", command= lambda: excluir()).grid(column=2, row=3, sticky="ew")
-#Lista dos produtos
-colunas = ('ID', 'Produto', 'Valor')
-tree = ttk.Treeview(janela, columns=colunas, show='headings')
-tree.heading('ID', text='ID')
-tree.heading('Produto', text='Produto')
-tree.heading('Valor', text='Valor')
-tree.grid(column=0, row=4, columnspan=3, sticky='nsew')
-treechildrens = tree.get_children()
-#Atualiza a lista dos produtos
-listar_produtos(tree)
+tk.Button(janela, text="Editar Produtos", command = lambda: abrir_janela()).grid (pady= 20, column=0, row=4, sticky="ew")
+tk.Button(janela, text="Ok", command = lambda: registrar_venda()).grid (column=1, row=4, sticky="ew")
+tk.Button(janela, text="Encerrar", command= lambda: fechar_programa()).grid(column=2, row=4, sticky="ew")
 
-#Funções dos Botões
-def inserir():
-    inserir_produto(produto.get(), valor.get())
-    listar_produtos(tree)
+def registrar_venda():
+    ...
 
-def atualizar():
-    atualizar_produto(id.get(), produto.get(), valor.get())
-    listar_produtos(tree)
-
-def excluir():
-    excluir_produto(id.get())
-    listar_produtos(tree)
-
-#Função para preencher o entry com os dados da tree
-def selecionado(event):
-    try:
-        item_selecionado = tree.selection()[0]
-        valor_item = tree.item(item_selecionado, 'values')
-        id.delete(0, tk.END)
-        id.insert(0, valor_item[0])
-        produto.delete(0, tk.END)
-        produto.insert(0, valor_item[1])
-        valor.delete(0, tk.END)
-        valor.insert(0, valor_item[2])
-    except:
-        pass
-    
-
-tree.bind('<<TreeviewSelect>>', selecionado)
+def fechar_programa():
+    ...
+qtd.bind("<KeyRelease>", atualizar_valores)
+produto.bind("<<ComboboxSelected>>", atualizar_valores)
 janela.mainloop()
+

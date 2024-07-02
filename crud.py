@@ -10,28 +10,44 @@ def listar_produtos(tree):
     cursor.execute("SELECT * FROM produtos")
     rows = cursor.fetchall()
     tree.delete(*tree.get_children())  # Limpar a Treeview
-    for row in rows:
+    for row in rows:                    # Insere novamente na lista
         tree.insert("", tk.END, values=row)
     conn.close()
+    return rows
 
 def atualizar_produto(id, produto, valor):
-    conn = conectar_bd()
-    cursor = conn.cursor()
-    cursor.execute("UPDATE produtos SET produto = ?, valor = ? WHERE id = ?", (produto, valor, id))
-    conn.commit()
-    conn.close()
+    executar("UPDATE produtos SET produto = ?, valor = ? WHERE id = ?", (produto, valor, id))
+
 
 def excluir_produto(id):
+    executar("DELETE FROM produtos WHERE id = ?", (id))
+
+def busca_preco(produto):
     conn = conectar_bd()
     cursor = conn.cursor()
-    cursor.execute("DELETE FROM produtos WHERE id = ?", (id,))
-    conn.commit()
-    conn.close()
+    cursor.execute("SELECT VALOR FROM PRODUTOS WHERE PRODUTO = ?", (produto,))
+    valor = cursor.fetchone()
+    if valor: 
+        return valor[0]
+    else:
+        return None
+
+def busca_produto():
+    conn = conectar_bd()
+    cursor = conn.cursor()
+    cursor.execute("SELECT PRODUTO FROM PRODUTOS")
+    produtos = cursor.fetchall()
+    return [produto[0] for produto in produtos]
 
 def inserir_produto(produto, valor):
-    conn = conectar_bd()
-    cursor = conn.cursor()
-    cursor.execute("INSERT INTO produtos (produto, valor) VALUES (?, ?)", (produto, valor))
-    listar_produtos
-    conn.commit()
-    conn.close()
+    executar("INSERT INTO produtos (produto, valor) VALUES (?, ?)", (produto, valor))
+
+def executar(comando, valores):
+    try:
+        conn = conectar_bd()
+        cursor = conn.cursor()
+        cursor.execute(comando, valores)
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        print(e)
