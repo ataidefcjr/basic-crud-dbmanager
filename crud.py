@@ -10,7 +10,7 @@ def listar_produtos(tree):
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM produtos")
     rows = cursor.fetchall()
-    tree.delete(*tree.get_children())  # Limpar a Treeview
+    tree.delete(*tree.get_children())   # Limpar a Treeview
     for row in rows:                    # Insere novamente na lista
         tree.insert("", tk.END, values=row)
     conn.close()
@@ -21,7 +21,7 @@ def atualizar_produto(id, produto, valor):
 
 
 def excluir_produto(id):
-    executar("DELETE FROM produtos WHERE id = ?", (id))
+    executar("DELETE FROM produtos WHERE id = ?", (id,))
 
 def busca_preco(produto):
     conn = conectar_bd()
