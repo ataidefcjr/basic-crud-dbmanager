@@ -1,32 +1,35 @@
 # editar_produto.py
 import tkinter as tk
 from tkinter import ttk, messagebox
-from crud import listar_produtos, inserir_produto, atualizar_produto, excluir_produto
+from crud import listar_produtos, inserir_produto, atualizar_produto, excluir_produto, on_click_exportar
+from tkcalendar import DateEntry
 
-def abrir_janela():
+
+
+def editar_produtos():
+    def show_error(mensagem):
+        janela.destroy()
+        messagebox.showerror("Erro", mensagem)
     def inserir():
         try:
             inserir_produto(produto_entry.get(), valor_entry.get())
             listar_produtos(tree)
         except Exception as e:
-            messagebox.showerror('ERRO', f'Ocorreu um erro: {e}')
-            print(e)
+            show_error(f"Ocorreu um erro: {e}")
 
     def atualizar():
         try:
             atualizar_produto(id_entry.get(), produto_entry.get(), valor_entry.get())
             listar_produtos(tree)
         except Exception as e:
-            messagebox.showerror('ERRO', f'Ocorreu um erro: {e}')
-            print(e)
+            show_error(f"Ocorreu um erro: {e}")
 
     def excluir():
         try:
             excluir_produto(id_entry.get())
             listar_produtos(tree)
         except Exception as e:
-            messagebox.showerror('ERRO', f'Ocorreu um erro: {e}')
-            print(e)
+            show_error(f"Ocorreu um erro: {e}")
 
     def selecionado(event):
         try:
@@ -73,5 +76,40 @@ def abrir_janela():
 
     listar_produtos(tree)
     tree.bind('<<TreeviewSelect>>', selecionado)
+    return janela
 
-    janela.mainloop()
+def exportar_vendas():
+    def show_error(mensagem):
+        janela.destroy() 
+        messagebox.showerror("Erro", mensagem)
+    def on_click(opcao):
+        if opcao == 1:
+            inicio = data_inicio.get_date()
+            fim = data_fim.get_date()
+            if inicio > fim:
+                show_error("A data de início não pode ser superior à data final.")
+            else:
+                on_click_exportar(inicio, fim, opcao)
+        else:
+            on_click_exportar(None, None, opcao)
+ 
+    janela = tk.Toplevel()
+    janela.title("Exportar")
+    janela.geometry('345x240')
+    janela.resizable(False, False)
+
+    tk.Label(janela, text="Data Inicial").grid(column=0, row=0, sticky="e", padx=15, pady=10)
+    tk.Label(janela, text="Data Final").grid(column=0, row=1, sticky="e", padx=15)
+ 
+    data_inicio = DateEntry(janela, width=18, background='black', foreground='white', borderwidth=2)
+    data_inicio.grid(column=1, row=0, padx=10, sticky='ew')
+    data_fim = DateEntry(janela, width=18, background='black', foreground='white', borderwidth=2)
+    data_fim.grid(column=1, row=1, padx=10, sticky='ew')
+
+    botao_exportar_selecionado = ttk.Button(janela, text="Exportar Período", command=lambda: on_click(1))
+    botao_exportar_selecionado.grid(columnspan=2, row=2, pady=10, padx=10, sticky='ew')
+    botao_exportar_dia = ttk.Button(janela, text="Exportar Vendas de Hoje", command=lambda: on_click(3))
+    botao_exportar_dia.grid(columnspan=2, row=3, pady=10, padx=10, sticky='ew')
+    botao_exportar_tudo = ttk.Button(janela, text="Exportar Tudo", command=lambda: on_click(2))
+    botao_exportar_tudo.grid(columnspan=2, row=4, pady=10, padx=10, sticky='ew')
+    return janela

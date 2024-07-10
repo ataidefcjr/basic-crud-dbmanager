@@ -1,6 +1,7 @@
 import sqlite3
 import tkinter as tk
-from datetime import datetime
+from datetime import datetime, timedelta
+import csv
 
 def conectar_bd():
     return sqlite3.connect('produtos.db')
@@ -49,8 +50,66 @@ def registrar_venda(produto, quantidade, valortotal):
         executar(("INSERT INTO VENDAS (PRODUTO, QUANTIDADE, VALOR, DATA) VALUES (?, ?, ?, ?)"), (produto, quantidade, valortotal, data))
     except:
         pass
-    finally:
-        return "Done"
+
+def formatar_data(data):
+    return data.strftime('%d-%m-%Y')
+
+def exportar(inicio, fim):
+    try: 
+        if inicio == 'all' and fim == 'all':
+            conn = conectar_bd()
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM VENDAS")
+            resultado = cursor.fetchall()
+            conn.close()
+            save_to_csv(resultado)
+            return resultado
+        elif inicio == 'today' and fim == 'today':
+            conn = conectar_bd()
+            cursor = conn.cursor()
+            cursor.execute(("SELECT * FROM VENDAS WHERE DATA = ?"), (formatar_data(datetime.today()),))
+            resultado = cursor.fetchall()
+            conn.close()
+            save_to_csv(resultado)
+            return resultado
+        else:
+            inicio = formatar_data(inicio)
+            fim = fim + timedelta(days=1)
+            fim = formatar_data(fim)
+            conn = conectar_bd()
+            cursor = conn.cursor()
+            cursor.execute(("SELECT * FROM VENDAS WHERE DATA BETWEEN (?) AND (?)"), (inicio, fim))
+            resultado = cursor.fetchall()
+            conn.close()
+            save_to_csv(resultado)
+            return resultado
+    except Exception as e:
+        print(e)
+
+def save_to_csv(resultado):
+    if resultado:
+        header = ['ID','Produto', 'Quantidade', 'Valor', 'Data']
+        filename = "Vendas do dia - " + datetime.today().strftime('%d-%m-%Y %H:%M:%S')
+        with open(filename, 'w', newline='', encoding='utf-8') as file:
+            writer = csv.writer(file)
+            writer.writerow(header)
+
+            for venda in resultado:
+                writer.writerow(venda)
+
+def on_click_exportar(data_inicio, data_fim, opcao):
+    if opcao == 1:
+        inicio = data_inicio
+        fim = data_fim
+        exportar(inicio, fim)
+    elif opcao == 2:
+        inicio = 'all'
+        fim = 'all'
+        exportar(inicio, fim)
+    elif opcao == 3:
+        inicio = 'today'
+        fim = 'today'
+        exportar(inicio, fim)
 
 def executar(comando, valores):
     try:

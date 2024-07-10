@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 from crud import busca_preco, busca_produto, registrar_venda
-from editar_produto import abrir_janela
+from editar_produto import editar_produtos, exportar_vendas
 
 def atualizar_valores(event=None):
     produto_selecionado = produto.get()
@@ -53,9 +53,13 @@ valor_total = tk.Entry(janela, state="readonly")
 valor_total.grid(column=1, row=3, sticky="ew")
 
 #Botões
-tk.Button(janela, text="Editar Produtos", command = lambda: abrir_janela()).grid (pady= 20, column=0, row=4, sticky="ew")
+tk.Button(janela, text="Editar Produtos", command = lambda: janela_editar()).grid ( column=0, row=4, sticky="ew")
 tk.Button(janela, text="Ok", command = lambda: registrar()).grid (column=1, row=4, sticky="ew")
 tk.Button(janela, text="Encerrar", command= lambda: fechar_programa()).grid(column=2, row=4, sticky="ew")
+tk.Button(janela, text="Exportar Vendas", command= lambda: janela_exportar()).grid(column=0, columnspan=3, row=5, sticky="ew")
+
+def produtos_update(combobox): ##atualiza a lista de produtos
+    combobox['values'] = busca_produto()
 
 def registrar():
     item = produto.get()
@@ -74,6 +78,16 @@ def registrar():
 def fechar_programa():
     janela.quit()
 
+def janela_editar():
+    janela = editar_produtos()
+    if janela:
+        janela.wait_window()
+        produtos_update(produto)
+
+def janela_exportar():
+    janela = exportar_vendas()
+    if janela:
+        janela.wait_window()
 
 qtd.bind("<KeyRelease>", atualizar_valores)
 produto.bind("<<ComboboxSelected>>", atualizar_valores)
