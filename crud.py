@@ -115,9 +115,9 @@ def exportar(inicio, fim):
 def save_to_csv(resultado):
     if resultado:
         header = ['ID','Quantidade', 'Produtos', 'Valor', 'Data']
-        filename = "Vendas - " + datetime.today().strftime('%d-%m-%Y %H:%M:%S')
+        filename = "Relatório - " + datetime.today().strftime('%d-%m-%Y %H-%M-%S') + ".csv"
         with open(filename, 'w', newline='', encoding='utf-8') as file:
-            writer = csv.writer(file)
+            writer = csv.writer(file, delimiter=';')
             writer.writerow(header)
 
             for venda in resultado:
