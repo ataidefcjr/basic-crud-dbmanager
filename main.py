@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
-from crud import busca_preco, busca_produto, registrar_venda
+from crud import busca_preco, busca_produto, registrar_venda, verificar_db
 from editar_produto import editar_produtos, exportar_vendas
 
 def atualizar_valores(event=None):
@@ -25,6 +25,8 @@ def atualizar_valores(event=None):
         print(e)
         pass
 
+verificar_db() 
+
 janela = tk.Tk()
 janela.title("Vendas")
 janela.geometry('500x200')
@@ -39,11 +41,13 @@ tk.Label(janela, text="Produto").grid(column=0, row=0, sticky="e", padx=20)
 produtos = busca_produto()
 produto = ttk.Combobox(janela, values=produtos)
 produto.grid(column=1, row=0, sticky='ew')
+
 #Entrada de quantidade
 tk.Label(janela, text="Quantidade").grid(column=0, row=1, sticky="e", padx=20)
 qtd = tk.Entry(janela)
 qtd.insert(0, "1")
 qtd.grid(column=1, row=1, sticky="ew")
+
 #Exibe o valor
 tk.Label(janela, text="Valor Unitário").grid(column=0, row=2, sticky="e", padx=20)
 valor_unit = tk.Entry(janela, state="readonly")
@@ -79,15 +83,19 @@ def fechar_programa():
     janela.quit()
 
 def janela_editar():
-    janela = editar_produtos()
-    if janela:
-        janela.wait_window()
+    editar = editar_produtos()
+    if editar:
+        janela.withdraw()
+        editar.wait_window()
         produtos_update(produto)
+        janela.deiconify()
 
 def janela_exportar():
-    janela = exportar_vendas()
-    if janela:
-        janela.wait_window()
+    exportar = exportar_vendas()
+    if exportar:
+        janela.withdraw()
+        exportar.wait_window()
+        janela.deiconify()
 
 qtd.bind("<KeyRelease>", atualizar_valores)
 produto.bind("<<ComboboxSelected>>", atualizar_valores)

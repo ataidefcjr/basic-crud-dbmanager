@@ -12,22 +12,35 @@ def editar_produtos():
         messagebox.showerror("Erro", mensagem)
     def inserir():
         try:
-            inserir_produto(produto_entry.get(), valor_entry.get())
-            listar_produtos(tree)
+            if not produto_entry.get() and valor_entry.get():
+                show_error(f"Insira o nome do produto")
+            elif not valor_entry.get() and produto_entry.get():
+                show_error("Insira o valor")
+            elif not produto_entry.get() and not valor_entry.get():
+                show_error("Insira o nome do produto e o valor")
+            else:
+                inserir_produto(produto_entry.get(), valor_entry.get())
+                listar_produtos(tree)
         except Exception as e:
             show_error(f"Ocorreu um erro: {e}")
 
     def atualizar():
         try:
-            atualizar_produto(id_entry.get(), produto_entry.get(), valor_entry.get())
-            listar_produtos(tree)
+            if id_entry.get() and produto_entry.get() and valor_entry.get():
+                atualizar_produto(id_entry.get(), produto_entry.get(), valor_entry.get())
+                listar_produtos(tree)
+            else:
+                show_error("Preencha todos os dados.")
         except Exception as e:
             show_error(f"Ocorreu um erro: {e}")
 
     def excluir():
         try:
-            excluir_produto(id_entry.get())
-            listar_produtos(tree)
+            if id_entry.get():
+                excluir_produto(id_entry.get())
+                listar_produtos(tree)
+            else:
+                show_error("Insira o ID do produto que deseja excluir.")
         except Exception as e:
             show_error(f"Ocorreu um erro: {e}")
 
@@ -83,16 +96,24 @@ def exportar_vendas():
         janela.destroy() 
         messagebox.showerror("Erro", mensagem)
     def on_click(opcao):
-        if opcao == 1:
-            inicio = data_inicio.get_date()
-            fim = data_fim.get_date()
-            if inicio > fim:
-                show_error("A data de início não pode ser superior à data final.")
+        try: 
+            if opcao == 1:
+                inicio = data_inicio.get_date()
+                fim = data_fim.get_date()
+                if inicio > fim:
+                    show_error("A data de início não pode ser superior à data final.")
+                else:
+                    on_click_exportar(inicio, fim, opcao)
+                    messagebox.showinfo("Exportado", "Verifique se o arquivo foi exportado corretamente.")
+                    janela.destroy()
             else:
-                on_click_exportar(inicio, fim, opcao)
-        else:
-            on_click_exportar(None, None, opcao)
- 
+                on_click_exportar(None, None, opcao)
+                messagebox.showinfo("Exportado", "Verifique se o arquivo foi exportado corretamente.")
+                janela.destroy()
+        except Exception as e:
+            show_error(e)
+
+
     janela = tk.Toplevel()
     janela.title("Exportar")
     janela.geometry('345x240')

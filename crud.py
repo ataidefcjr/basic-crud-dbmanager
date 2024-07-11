@@ -3,8 +3,30 @@ import tkinter as tk
 from datetime import datetime, timedelta
 import csv
 
+banco_dados = 'produtos.db'
+
+def verificar_db():
+    conn = sqlite3.connect(banco_dados)
+    cursor = conn.cursor()
+    
+    cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='PRODUTOS';")
+    produto_existe = cursor.fetchone() is not None
+
+    cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='VENDAS';")
+    vendas_existe = cursor.fetchone() is not None
+
+    if not produto_existe:
+        cursor.execute("CREATE TABLE PRODUTOS (id INTEGER PRIMARY KEY AUTOINCREMENT, produto TEXT NOT NULL, valor REAL NOT NULL);")
+        print("TABELA PRODUTOS CRIADA")
+    if not vendas_existe:
+        cursor.execute("CREATE TABLE VENDAS (id INTEGER PRIMARY KEY AUTOINCREMENT, quantidade INTEGER NOT NULL, produto TEXT NOT NULL, valor REAL NOT NULL, data DATE NOT NULL);")
+        print("TABELA VENDAS CRIADA")
+
+    conn.commit()
+    conn.close()
+    
 def conectar_bd():
-    return sqlite3.connect('produtos.db')
+    return sqlite3.connect(banco_dados)
 
 def listar_produtos(tree):
     conn = conectar_bd()
@@ -18,6 +40,8 @@ def listar_produtos(tree):
     return rows
 
 def atualizar_produto(id, produto, valor):
+    valor = valor.replace(',', '.')
+    valor = "{:.2f}".format(float(valor))
     executar("UPDATE produtos SET produto = ?, valor = ? WHERE id = ?", (produto, valor, id))
 
 
@@ -42,6 +66,8 @@ def busca_produto():
     return [produto[0] for produto in produtos]
 
 def inserir_produto(produto, valor):
+    valor = valor.replace(',', '.')
+    valor = "{:.2f}".format(float(valor))
     executar("INSERT INTO produtos (produto, valor) VALUES (?, ?)", (produto, valor))
 
 def registrar_venda(produto, quantidade, valortotal):
@@ -88,8 +114,8 @@ def exportar(inicio, fim):
 
 def save_to_csv(resultado):
     if resultado:
-        header = ['ID','Produto', 'Quantidade', 'Valor', 'Data']
-        filename = "Vendas do dia - " + datetime.today().strftime('%d-%m-%Y %H:%M:%S')
+        header = ['ID','Quantidade', 'Produtos', 'Valor', 'Data']
+        filename = "Vendas - " + datetime.today().strftime('%d-%m-%Y %H:%M:%S')
         with open(filename, 'w', newline='', encoding='utf-8') as file:
             writer = csv.writer(file)
             writer.writerow(header)
