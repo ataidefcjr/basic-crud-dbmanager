@@ -122,9 +122,10 @@ def exportar_vendas():
     tk.Label(janela, text="Data Inicial").grid(column=0, row=0, sticky="e", padx=15, pady=10)
     tk.Label(janela, text="Data Final").grid(column=0, row=1, sticky="e", padx=15)
  
-    data_inicio = DateEntry(janela, width=18, background='black', foreground='white', borderwidth=2)
+    date_pattern = 'dd/mm/yyyy'
+    data_inicio = DateEntry(janela, width=18, background='black', foreground='white', borderwidth=2, date_pattern=date_pattern, locale='pt_BR')
     data_inicio.grid(column=1, row=0, padx=10, sticky='ew')
-    data_fim = DateEntry(janela, width=18, background='black', foreground='white', borderwidth=2)
+    data_fim = DateEntry(janela, width=18, background='black', foreground='white', borderwidth=2, locale='pt_BR')
     data_fim.grid(column=1, row=1, padx=10, sticky='ew')
 
     botao_exportar_selecionado = ttk.Button(janela, text="Exportar Período", command=lambda: on_click(1))
