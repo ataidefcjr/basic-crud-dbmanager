@@ -93,7 +93,9 @@ def exportar(inicio, fim):
         elif inicio == 'today' and fim == 'today':
             conn = conectar_bd()
             cursor = conn.cursor()
-            cursor.execute(("SELECT * FROM VENDAS WHERE DATA = ?"), (formatar_data(datetime.today()),))
+            inicio = datetime.now()
+            fim = inicio + timedelta(days=1)
+            cursor.execute(("SELECT * FROM VENDAS WHERE DATA BETWEEN (?) AND (?)"), (formatar_data(inicio), formatar_data(fim),))
             resultado = cursor.fetchall()
             conn.close()
             save_to_csv(resultado)
