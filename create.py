@@ -8,8 +8,15 @@ def create_desktop_shortcut():
     # Caminho para o arquivo main.py
     main_file = os.path.join(current_dir, 'main.py')
 
+    #Vefifica se é windows
+    is_windows = sys.platform.startswith('win')
+    if is_windows:
+        executable = 'pythonw'
+    else:
+        executable = 'python3'
+
     # Criar atalho na área de trabalho
-    make_shortcut(main_file, name='Gerenciador de Vendas', description='Banco de Dados', terminal=False, executable='pythonw', working_dir=current_dir)
+    make_shortcut(main_file, name='Gerenciador de Vendas', description='Banco de Dados', terminal=False, executable=executable, working_dir=current_dir)
 
     print('''--------------------------------------------------------------------------------------
     \n ----------------------------- Shortchut added to desktop ----------------------------
