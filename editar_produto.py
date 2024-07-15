@@ -76,16 +76,21 @@ def editar_produtos():
     valor_entry = tk.Entry(janela)
     valor_entry.grid(column=1, row=2, sticky="ew")
 
-    ttk.Button(janela, text="Inserir", command=inserir).grid(pady=20, column=0, row=3, sticky="ew")
-    ttk.Button(janela, text="Atualizar", command=atualizar).grid(column=1, row=3, sticky="ew")
-    ttk.Button(janela, text="Excluir", command=excluir).grid(column=2, row=3, sticky="ew")
+    ttk.Button(janela, text="Inserir", command=inserir).grid(pady=20, column=0, row=3, sticky="ew", padx=10)
+    ttk.Button(janela, text="Atualizar", command=atualizar).grid(column=1, row=3, sticky="ew", padx=10)
+    ttk.Button(janela, text="Excluir", command=excluir).grid(column=2, row=3, sticky="ew", padx=10)
 
     colunas = ('ID', 'Produto', 'Valor')
     tree = ttk.Treeview(janela, columns=colunas, show='headings')
+    tree.column('ID', width=40)
+    tree.column('Valor', width=70)
     tree.heading('ID', text='ID')
     tree.heading('Produto', text='Produto')
     tree.heading('Valor', text='Valor')
-    tree.grid(column=0, row=4, columnspan=3, sticky='nsew')
+    tree.grid(column=0, row=4, columnspan=3, sticky='nsew', pady=10, padx=20)
+    scrollbar = ttk.Scrollbar(janela, orient='vertical', command=tree.yview)
+    tree.configure(yscrollcommand=scrollbar.set)
+    scrollbar.grid(column=3, row=4, sticky='ns')
 
     listar_produtos(tree)
     tree.bind('<<TreeviewSelect>>', selecionado)
@@ -102,6 +107,7 @@ def exportar_vendas():
                 fim = data_fim.get_date()
                 if inicio > fim:
                     show_error("A data de início não pode ser superior à data final.")
+                    janela.destroy()
                 else:
                     on_click_exportar(inicio, fim, opcao)
                     messagebox.showinfo("Exportado", "Verifique se o arquivo foi exportado corretamente.")
@@ -116,8 +122,13 @@ def exportar_vendas():
 
     janela = tk.Toplevel()
     janela.title("Exportar")
-    janela.geometry('345x240')
+    janela.geometry('360x250')
     janela.resizable(False, False)
+
+    for i in range(5):
+        janela.rowconfigure(i, weight=1)
+    for i in range(2):
+        janela.columnconfigure(i, weight=1)
 
     tk.Label(janela, text="Data Inicial").grid(column=0, row=0, sticky="e", padx=15, pady=10)
     tk.Label(janela, text="Data Final").grid(column=0, row=1, sticky="e", padx=15)
@@ -133,4 +144,5 @@ def exportar_vendas():
     botao_exportar_dia.grid(columnspan=2, row=3, pady=10, padx=10, sticky='ew')
     botao_exportar_tudo = ttk.Button(janela, text="Exportar Tudo", command=lambda: on_click(2))
     botao_exportar_tudo.grid(columnspan=2, row=4, pady=10, padx=10, sticky='ew')
+
     return janela

@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import messagebox
 from ttkwidgets.autocomplete import AutocompleteCombobox
 from crud import busca_preco, busca_produto, registrar_venda, verificar_db
 from editar_produto import editar_produtos, exportar_vendas
@@ -37,7 +37,8 @@ verificar_db()
 
 janela = tk.Tk()
 janela.title("Vendas")
-janela.geometry('500x200')
+janela.geometry('500x220')
+janela.resizable(False, False)
 
 janela.columnconfigure(0, weight=0)
 janela.columnconfigure(1, weight=1)
@@ -65,10 +66,10 @@ valor_total = tk.Entry(janela, state="readonly", textvariable='')
 valor_total.grid(column=1, row=3, sticky="ew")
 
 #Botões
-tk.Button(janela, text="Editar Produtos", command = lambda: janela_editar()).grid ( column=0, row=4, sticky="ew")
-tk.Button(janela, text="Ok", command = lambda: registrar()).grid (column=1, row=4, sticky="ew")
-tk.Button(janela, text="Encerrar", command= lambda: fechar_programa()).grid(column=2, row=4, sticky="ew")
-tk.Button(janela, text="Exportar Vendas", command= lambda: janela_exportar()).grid(column=0, columnspan=3, row=5, sticky="ew")
+tk.Button(janela, text="Editar Produtos", command = lambda: janela_editar()).grid ( column=0, row=4, sticky="ew", padx=5, pady=5)
+tk.Button(janela, text="Ok", command = lambda: registrar()).grid (column=1, row=4, sticky="ew", padx=5, pady=5)
+tk.Button(janela, text="Encerrar", command= lambda: fechar_programa()).grid(column=2, row=4, sticky="ew", padx=5, pady=5)
+tk.Button(janela, text="Exportar Vendas", command= lambda: janela_exportar()).grid(column=0, columnspan=3, row=5, sticky="ew", padx=5, pady=10)
 
 def produtos_update(combobox): ##atualiza a lista de produtos
     combobox['values'] = sorted(busca_produto())
