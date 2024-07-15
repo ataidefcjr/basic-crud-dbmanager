@@ -73,6 +73,8 @@ tk.Button(janela, text="Exportar Vendas", command= lambda: janela_exportar()).gr
 
 def produtos_update(combobox): ##atualiza a lista de produtos
     combobox['values'] = sorted(busca_produto())
+    global produtos
+    produtos = sorted(busca_produto())
 
 def registrar():
     item = produto.get()
@@ -111,9 +113,9 @@ def janela_editar():
     if editar:
         janela.withdraw()
         editar.wait_window()
-        produtos_update(produto)
         janela.deiconify()
-
+        produtos_update(produto)
+        
 def janela_exportar():
     exportar = exportar_vendas()
     if exportar:
