@@ -2,6 +2,8 @@ import sqlite3
 import tkinter as tk
 from datetime import datetime, timedelta
 import csv
+import os
+import subprocess
 
 banco_dados = 'produtos.db'
 
@@ -124,7 +126,19 @@ def save_to_csv(resultado):
 
             for venda in resultado:
                 writer.writerow(venda)
-
+            
+            if os.path.exists(filename):
+                file_path = os.path.abspath(filename)
+                try:
+                    os.startfile(file_path)
+                except AttributeError:
+                    try:
+                        subprocess.call(['xdg-open', file_path])
+                    except:
+                        pass
+                except:
+                    pass
+        
 def on_click_exportar(data_inicio, data_fim, opcao):
     if opcao == 1:
         inicio = data_inicio
