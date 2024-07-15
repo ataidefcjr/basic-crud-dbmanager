@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
+from ttkwidgets.autocomplete import AutocompleteCombobox
 from crud import busca_preco, busca_produto, registrar_venda, verificar_db
 from editar_produto import editar_produtos, exportar_vendas
 
@@ -46,7 +47,7 @@ janela.rowconfigure(4, weight=1)
 #Menu de produtos
 tk.Label(janela, text="Produto").grid(column=0, row=0, sticky="e", padx=20)
 produtos = sorted(busca_produto())
-produto = ttk.Combobox(janela, values=produtos)
+produto = AutocompleteCombobox(janela, completevalues=produtos)
 produto.grid(column=1, row=0, sticky='ew')
 
 #Entrada de quantidade

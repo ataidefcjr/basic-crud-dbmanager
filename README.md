@@ -17,7 +17,7 @@ sudo apt install python3 git -y
 ```
 git clone https://github.com/ataidefcjr/basic-crud-dbmanager
 cd basic-crud-dbmanager
-pip install tkcalendar pyshortcuts
+pip install tkcalendar pyshortcuts ttkwidgets
 python create.py
 ```
 #### `create.py` is used to create desktop shortchut.
