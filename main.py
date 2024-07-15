@@ -6,7 +6,14 @@ from editar_produto import editar_produtos, exportar_vendas
 def atualizar_valores(event=None):
     produto_selecionado = produto.get()
     try:
-        if produto_selecionado:
+        if not qtd.get():
+            valor_unit.config(state="normal")
+            valor_unit.delete(0, tk.END)
+            valor_unit.config(state="readonly")
+            valor_total.config(state="normal")
+            valor_total.delete(0, tk.END)
+            valor_total.config(state="readonly")
+        if produto_selecionado in produtos and qtd.get():
             preco = float(busca_preco(produto_selecionado))
             unidades = int(qtd.get())
             if preco is not None:
@@ -38,7 +45,7 @@ janela.rowconfigure(4, weight=1)
 
 #Menu de produtos
 tk.Label(janela, text="Produto").grid(column=0, row=0, sticky="e", padx=20)
-produtos = busca_produto()
+produtos = sorted(busca_produto())
 produto = ttk.Combobox(janela, values=produtos)
 produto.grid(column=1, row=0, sticky='ew')
 
@@ -50,10 +57,10 @@ qtd.grid(column=1, row=1, sticky="ew")
 
 #Exibe o valor
 tk.Label(janela, text="Valor Unitário").grid(column=0, row=2, sticky="e", padx=20)
-valor_unit = tk.Entry(janela, state="readonly")
+valor_unit = tk.Entry(janela, state="readonly", textvariable='')
 valor_unit.grid(column=1, row=2, sticky="ew")
 tk.Label(janela, text="Valor Total").grid(column=0, row=3, sticky="e", padx=20)
-valor_total = tk.Entry(janela, state="readonly")
+valor_total = tk.Entry(janela, state="readonly", textvariable='')
 valor_total.grid(column=1, row=3, sticky="ew")
 
 #Botões
@@ -63,21 +70,34 @@ tk.Button(janela, text="Encerrar", command= lambda: fechar_programa()).grid(colu
 tk.Button(janela, text="Exportar Vendas", command= lambda: janela_exportar()).grid(column=0, columnspan=3, row=5, sticky="ew")
 
 def produtos_update(combobox): ##atualiza a lista de produtos
-    combobox['values'] = busca_produto()
+    combobox['values'] = sorted(busca_produto())
 
 def registrar():
     item = produto.get()
     quantidade = qtd.get()
-    if item and quantidade:
-        try:
-            total = valor_total.get()
-            registrar_venda(item, quantidade, total)
-        except Exception as e:
-            messagebox.showwarning("Erro", "Erro ao registrar produto")
-        finally:
-            messagebox.showinfo("Sucesso", "Venda Registrada")
+    if quantidade:
+        if item in produtos:
+            try:
+                total = valor_total.get()
+                registrar_venda(item, quantidade, total)
+                messagebox.showinfo("Sucesso", "Venda Registrada")
+            except Exception as e:
+                messagebox.showwarning("Erro", "Erro ao registrar produto")
+            finally:
+                produto.set('')
+                qtd.delete(0, 'end')
+                qtd.insert(0, '1')
+                valor_total.config(state="normal")
+                valor_unit.config(state="normal")
+                valor_unit.delete(0, 'end')
+                valor_total.delete(0, 'end')  
+                valor_total.config(state="readonly")
+                valor_unit.config(state='readonly')
+        else:
+            messagebox.showwarning("Erro", "Produto não cadastrado na base de dados.")
+
     else:
-        messagebox.showwarning("Erro", "Insira o produto e a quantidade")
+        messagebox.showwarning("Erro", "Insira a quantidade.")
 
 def fechar_programa():
     janela.quit()
