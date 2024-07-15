@@ -79,6 +79,7 @@ def registrar():
     if quantidade:
         if item in produtos:
             try:
+                atualizar_valores()
                 total = valor_total.get()
                 registrar_venda(item, quantidade, total)
                 messagebox.showinfo("Sucesso", "Venda Registrada")
@@ -94,6 +95,7 @@ def registrar():
                 valor_total.delete(0, 'end')  
                 valor_total.config(state="readonly")
                 valor_unit.config(state='readonly')
+                atualizar_valores()
         else:
             messagebox.showwarning("Erro", "Produto não cadastrado na base de dados.")
 
