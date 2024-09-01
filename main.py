@@ -79,7 +79,8 @@ def produtos_update(combobox): ##atualiza a lista de produtos
 def registrar():
     item = produto.get()
     quantidade = qtd.get()
-    if quantidade:
+    quantidade = int(quantidade)
+    if quantidade > 0:
         if item in produtos:
             try:
                 atualizar_valores()

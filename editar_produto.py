@@ -5,7 +5,7 @@ from crud import listar_produtos, inserir_produto, atualizar_produto, excluir_pr
 from tkcalendar import DateEntry
 
 
-
+#Janela Editar Produtos
 def editar_produtos():
     def show_error(mensagem):
         janela.destroy()
@@ -96,6 +96,7 @@ def editar_produtos():
     tree.bind('<<TreeviewSelect>>', selecionado)
     return janela
 
+#Janela Exportar Vendas
 def exportar_vendas():
     def show_error(mensagem):
         janela.destroy() 

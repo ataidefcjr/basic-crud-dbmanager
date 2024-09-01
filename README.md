@@ -1,4 +1,4 @@
-# ****INSTALLATION****
+# ****Usage****
 ### Make sure that you have Python and Git installed.
 * `Windows users:` 
 ```

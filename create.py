@@ -2,6 +2,7 @@ import os
 from pyshortcuts import make_shortcut
 import sys
 
+#Cria um atalho na área de trabalho
 def create_desktop_shortcut():
     # Diretório onde o script create_shortcut.py está localizado
     current_dir = os.path.dirname(os.path.realpath(__file__))

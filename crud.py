@@ -7,6 +7,7 @@ import subprocess
 
 banco_dados = 'produtos.db'
 
+#Verifica se xiste o banco de dados, se não existir, cria
 def verificar_db():
     conn = sqlite3.connect(banco_dados)
     cursor = conn.cursor()
